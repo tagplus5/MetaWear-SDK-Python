@@ -9,7 +9,16 @@ import os
 import platform
 import sys
 
-machine = os.environ['MACHINE'] if 'MACHINE' in os.environ else ("arm" if ("arm" in platform.machine()) or ("aarch64" in platform.machine()) else ("x64" if sys.maxsize > 2**32 else "x86"))
+if 'MACHINE' in os.environ:
+    machine = os.environ['MACHINE']
+elif "arm" in platform.machine():
+    machine = "arm"
+elif "aarch64" in platform.machine():
+    machine = "aarch64"
+elif sys.maxsize > 2**32:
+    machine = "x64"
+else:
+    machine = "x86"
 root = os.path.dirname(os.path.abspath(__file__))
 dest = os.path.join("mbientlab", "metawear")
 
@@ -67,7 +76,7 @@ so_pkg_data = ['libmetawear.so'] if platform.system() == 'Linux' else ['MetaWear
 setup(
     name='metawear',
     packages=['mbientlab', 'mbientlab.metawear'],
-    version='1.0.7',
+    version='1.0.8',
     description='Python bindings for the MetaWear C++ SDK by MbientLab',
     long_description=open(os.path.join(os.path.dirname(__file__), "README.rst")).read(),
     package_data={'mbientlab.metawear': so_pkg_data},
@@ -76,7 +85,7 @@ setup(
     author='MbientLab',
     author_email="hello@mbientlab.com",
     install_requires=[
-        'warble >= 1.2.8, < 2.0',
+        'warble >= 1.2.9, < 2.0',
         'requests',
         'pyserial'
     ],
